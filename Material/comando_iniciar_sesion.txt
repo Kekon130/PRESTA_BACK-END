@@ -1,0 +1,1 @@
+aws cognito-idp admin-initiate-auth --user-pool-id eu-north-1_Ua8jjMA0Z --client-id 18bmns56n1vseji6i6l0he3upb --auth-flow ADMIN_NO_SRP_AUTH --auth-parameters USERNAME=sergio.plaza@alumnos.upm.es,PASSWORD=2.Skylanders
