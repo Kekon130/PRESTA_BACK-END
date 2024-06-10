@@ -9,16 +9,20 @@ def lambda_handler(event, context):
     
     if not token:
       return {
-        'StatusCode': 401,
-        'body': json.dumps('Unauthorized')
+        'statusCode': 401,
+        'body': json.dumps({
+          'message': 'Unauthorized'
+        })
       }
     else:
       decoded_token = jwt.get_unverified_claims(token)
       
       if 'cognito:groups' not in decoded_token or ('Alumnos' not in decoded_token['cognito:groups'] and 'Gestores' not in decoded_token['cognito:groups']):
         return {
-          'StatusCode': 401,
-          'body': json.dumps('Unauthorized')
+          'statusCode': 401,
+          'body': json.dumps({
+            'message': 'Unauthorized'
+          })
         }
       else:
         rds_host = os.getenv('RDS_HOST')
@@ -36,8 +40,10 @@ def lambda_handler(event, context):
           
         except mysql.connector.Error as err:
           return {
-            'StatusCode': 500,
-            'body': json.dumps(f"Error connecting to database: {str(err)}")
+            'statusCode': 500,
+            'body': json.dumps({
+              'message': f"Error connecting to database: {str(err)}"
+            })
           }
           
         if event['pathParameters'] is not None:
@@ -50,30 +56,38 @@ def lambda_handler(event, context):
           cursor = connection.cursor(dictionary=True)
           cursor.execute(f"SELECT * FROM {table} WHERE ID = {material_id}")
           material = cursor.fetchone()
-          
-          if material:
-            return {
-              'StatusCode': 200,
-              'body': json.dumps(material)
-            }
-          else:
-            return {
-              'StatusCode': 404,
-              'body': json.dumps(f"Material with ID {query_params.get('materialID')} not found")
-            }
         
         except mysql.connector.Error as err:
           return {
-            'StatusCode': 500,
-            'body': json.dumps(f"Error querying database: {str(err)}")
+            'statusCode': 500,
+            'body': json.dumps({
+              'message': f"Error getting material: {str(err)}"
+            })
           }
           
         finally:
           cursor.close()
           connection.close()
+          
+        if material:
+          return {
+            'statusCode': 200,
+            'body': json.dumps({
+              'Material': material
+            })
+          }
+        else:
+          return {
+            'statusCode': 404,
+            'body': json.dumps({
+              'message': f"Material with ID {query_params.get('materialID')} not found"
+            })
+          }
     
   except Exception as e:
     return {
-      'StatusCode': 500,
-      'body': json.dumps(f"Error getting token: {str(e)}")
+      'statusCode': 500,
+      'body': json.dumps({
+        'message': f"Error: {str(e)}"
+      })
     }

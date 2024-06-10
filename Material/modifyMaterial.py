@@ -9,7 +9,7 @@ def lambda_handler(event, context):
     
     if not token:
       return {
-        'StatusCode': 401,
+        'statuscode': 401,
         'body': json.dumps('Unauthorized')
       }
       
@@ -18,8 +18,10 @@ def lambda_handler(event, context):
       
       if 'cognito:groups' not in decoded_token or 'Gestores' not in decoded_token['cognito:groups']:
         return {
-          'StatusCode': 401,
-          'body': json.dumps('Unauthorized')
+          'statuscode': 401,
+          'body': json.dumps({
+            'message': 'Unauthorized'
+          })
         }
         
       else:
@@ -38,8 +40,10 @@ def lambda_handler(event, context):
           
         except mysql.connector.Error as err:
           return {
-            'StatusCode': 500,
-            'body': json.dumps(f"Error connecting to database: {str(err)}")
+            'statuscode': 500,
+            'body': json.dumps({
+              'message': f"Error connecting to database: {str(err)}"
+            })
           }
           
         if event['pathParameters'] is not None:
@@ -62,22 +66,28 @@ def lambda_handler(event, context):
             
           else:
             return {
-              'StatusCode': 400,
-              'body': json.dumps('Invalid table name')
+              'statuscode': 400,
+              'body': json.dumps({
+                'message': "Invalid table name"
+              })
             }
             
           cursor.execute(query, json.loads(event['body']))
           connection.commit()
           
           return {
-            'StatusCode': 200,
-            'body': json.dumps('Material edited successfully')
+            'statuscode': 200,
+            'body': json.dumps({
+              'message': 'Material modified successfully'
+            })
           }
           
         except mysql.connector.Error as err:
           return {
-            'StatusCode': 500,
-            'body': json.dumps(f"Error querying database: {str(err)}")
+            'statuscode': 500,
+            'body': json.dumps({
+              'message': f"Error modifying material: {str(err)}"
+            })
           }
           
         finally:
@@ -86,6 +96,8 @@ def lambda_handler(event, context):
           
   except Exception as e:
     return {
-      'StatusCode': 500,
-      'body': json.dumps(f"Error: {str(e)}")
+      'statuscode': 500,
+      'body': json.dumps({
+        'message': f"Error: {str(e)}"
+      })
     }
