@@ -9,7 +9,7 @@ def lambda_handler(event, context):
     
     if not token:
       return {
-        'statuscode': 401,
+        'statusCode': 401,
         'body': json.dumps('Unauthorized')
       }
       
@@ -18,7 +18,7 @@ def lambda_handler(event, context):
       
       if 'cognito:groups' not in decoded_token or 'Gestores' not in decoded_token['cognito:groups']:
         return {
-          'statuscode': 401,
+          'statusCode': 401,
           'body': json.dumps({
             'message': 'Unauthorized'
           })
@@ -40,7 +40,7 @@ def lambda_handler(event, context):
           
         except mysql.connector.Error as err:
           return {
-            'statuscode': 500,
+            'statusCode': 500,
             'body': json.dumps({
               'message': f"Error connecting to database: {str(err)}"
             })
@@ -66,7 +66,7 @@ def lambda_handler(event, context):
             
           else:
             return {
-              'statuscode': 400,
+              'statusCode': 400,
               'body': json.dumps({
                 'message': "Invalid table name"
               })
@@ -76,7 +76,7 @@ def lambda_handler(event, context):
           connection.commit()
           
           return {
-            'statuscode': 200,
+            'statusCode': 200,
             'body': json.dumps({
               'message': 'Material modified successfully'
             })
@@ -84,7 +84,7 @@ def lambda_handler(event, context):
           
         except mysql.connector.Error as err:
           return {
-            'statuscode': 500,
+            'statusCode': 500,
             'body': json.dumps({
               'message': f"Error modifying material: {str(err)}"
             })
@@ -96,7 +96,7 @@ def lambda_handler(event, context):
           
   except Exception as e:
     return {
-      'statuscode': 500,
+      'statusCode': 500,
       'body': json.dumps({
         'message': f"Error: {str(e)}"
       })
