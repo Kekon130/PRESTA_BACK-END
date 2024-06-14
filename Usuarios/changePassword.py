@@ -16,7 +16,7 @@ def lambda_handler(event, context):
     else:
       decoded_token = jwt.get_unverified_claims(token)
       
-      if 'cognito:groups' not in decoded_token or 'Administradores' not in decoded_token['cognito:groups']:
+      if 'cognito:groups' not in decoded_token or ('Administradores' not in decoded_token['cognito:groups'] and 'Alumnos' not in decoded_token['cognito:groups']):
         return {
           'statusCode': 401,
           'body': json.dumps({
@@ -27,10 +27,14 @@ def lambda_handler(event, context):
       else:
         user_pool_id = os.getenv('USER_POOL_ID')
         
+        if 'pathParameters' in event and event['pathParameters'] is not None:
+            path_params = event['pathParameters']
+            
+            username = path_params['username']
+        
         if 'body' in event and event['body'] is not None:
             body = json.loads(event['body'])
             
-            username = body['username']
             new_password = body['new_password']
         
         client = boto3.client('cognito-idp')

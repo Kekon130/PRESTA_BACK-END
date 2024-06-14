@@ -29,10 +29,10 @@ def lambda_handler(event, context):
       else:
         user_pool_id = os.getenv('USER_POOL_ID')
         
-        if 'body' in event and event['body'] is not None:
-          body = json.loads(event['body'])
-          
-          username = body['username']
+        if 'pathParameters' in event and event['pathParameters'] is not None:
+            path_parameters = event['pathParameters']
+            
+            username = path_parameters['username']
           
         client = boto3.client('cognito-idp')
         

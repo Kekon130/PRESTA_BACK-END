@@ -27,10 +27,14 @@ def lambda_handler(event, context):
       else:
         user_pool_id = os.getenv('USER_POOL_ID')
         
+        if 'pathParameters' in event and event['pathParameters'] is not None:
+            path_parameters = event['pathParameters']
+            
+            username = path_parameters['username']
+        
         if 'body' in event and event['body'] is not None:
             body = json.loads(event['body'])
             
-            username = body['username']
             new_password = body['new_password']
             new_name = body['new_name']
         
