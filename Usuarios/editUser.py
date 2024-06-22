@@ -1,51 +1,28 @@
 import json
 import boto3
-import os
 from jose import jwt
+from utils_Usuarios import Rol_Usuario, USER_POOL_ID
 
 def lambda_handler(event, context):
   try:
     token = event['headers']['auth']
     
-    if not token:
-      return {
-        'statusCode': 401,
-        'body': json.dumps('Unauthorized')
-      }
-      
-    else:
+    if token:
       decoded_token = jwt.get_unverified_claims(token)
       
-      if 'cognito:groups' not in decoded_token or ('Alumnos' not in decoded_token['cognito:groups'] and 'Gestores' not in decoded_token['cognito:groups']):
-        return {
-          'statusCode': 401,
-          'body': json.dumps({
-            'message': 'Unauthorized'
-          })
-        }
-        
-      else:
-        user_pool_id = os.getenv('USER_POOL_ID')
-        
-        if 'pathParameters' in event and event['pathParameters'] is not None:
-            path_parameters = event['pathParameters']
-            
-            username = path_parameters['username']
-        
+      if 'cognito:groups' in decoded_token and (Rol_Usuario.Alumnos.value in decoded_token['cognito:groups'] or Rol_Usuario.Gestores.value in decoded_token['cognito:groups']):
         if 'body' in event and event['body'] is not None:
-            body = json.loads(event['body'])
-            
-            new_password = body['new_password']
-            new_name = body['new_name']
-        
+          body = json.loads(event['body'])
+          
         client = boto3.client('cognito-idp')
         responses = {}
         
-        if new_name:
+        if 'new_name' in body and body['new_name'] is not None:
+          new_name = body['new_name']
           try:
             response = client.admin_update_user_attributes(
-                UserPoolId=user_pool_id,
-                Username=username,
+                UserPoolId=USER_POOL_ID,
+                Username=decoded_token['sub'],
                 UserAttributes=[
                     {
                         'Name': 'name',
@@ -54,50 +31,42 @@ def lambda_handler(event, context):
                 ]
             )
             
-            print('Name update:\n')
-            print(response)
-            
             responses['name'] = 'Name updated successfully'
-              
-          except client.exceptions.UserNotFoundException:
+            
+          except client.exceptions.UserNotFoundException as e:
             return {
-                'statusCode': 404,
-                'body': json.dumps({
-                    'message': 'User not found'
-                })
+              'statusCode': 404,
+              'body': json.dumps({
+                'message': 'User not found'
+              })
             }
             
           except client.exceptions.InvalidParameterException as e:
             return {
-                'statusCode': 400,
-                'body': json.dumps({
-                    'message': f'Invalid parameter: {str(e)}'
-                })
+              'statusCode': 400,
+              'body': json.dumps({
+                'message': 'Invalid parameters'
+              })
             }
+            
             
           except Exception as e:
-            return {
-                'statusCode': 500,
-                'body': json.dumps({
-                    'message': f"Error: {str(e)}"
-                })
-            }
+            print(e)
+            responses['name'] = 'Name update failed'
             
-        if new_password:
+        if 'new_password' in body and body['new_password'] is not None:
+          new_password = body['new_password']
           try:
             response = client.admin_set_user_password(
-              UserPoolId=user_pool_id,
-              Username=username,
-              Password=new_password,
-              Permanent=True
+                UserPoolId=USER_POOL_ID,
+                Username=decoded_token['sub'],
+                Password=new_password,
+                Permanent=True
             )
             
-            print('Password update:\n')
-            print(response)
+            responses['password'] = 'Password updated successfully'
             
-            responses['password'] = 'Password changed successfully'
-            
-          except client.exceptions.UserNotFoundException:
+          except client.exceptions.UserNotFoundException as e:
             return {
               'statusCode': 404,
               'body': json.dumps({
@@ -109,7 +78,7 @@ def lambda_handler(event, context):
             return {
               'statusCode': 400,
               'body': json.dumps({
-                'message': f'Invalid password: {str(e)}'
+                'message': 'Invalid password'
               })
             }
             
@@ -117,7 +86,7 @@ def lambda_handler(event, context):
             return {
               'statusCode': 400,
               'body': json.dumps({
-                'message': f'Invalid parameters: {str(e)}'
+                'message': 'Invalid parameters'
               })
             }
             
@@ -125,29 +94,44 @@ def lambda_handler(event, context):
             return {
               'statusCode': 403,
               'body': json.dumps({
-                'message': f'Not authorized: {str(e)}'
+                'message': 'The user is not authorized to change the password'
               })
             }
-          
+            
           except Exception as e:
             return {
               'statusCode': 500,
               'body': json.dumps({
-                'message': f"Error: {str(e)}"
+                'message': 'Password update failed'
               })
             }
-            
         return {
           'statusCode': 200,
           'body': json.dumps({
-            'message': responses
+            'responses': responses
           })
         }
         
+      else:
+        return {
+          'statusCode': 403,
+          'body': json.dumps({
+            'message': 'The user is not allowed to perform this action'
+          })
+        }
+        
+    else:
+      return {
+        'statusCode': 401,
+        'body': json.dumps({
+          'message': 'Missing authentication token'
+        })
+      }
+      
   except Exception as e:
     return {
       'statusCode': 500,
       'body': json.dumps({
-        'message': f"Error: {str(e)}"
+        'message': str(e)
       })
-    } 
+    }

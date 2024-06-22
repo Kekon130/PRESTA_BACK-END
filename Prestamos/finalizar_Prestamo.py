@@ -1,8 +1,10 @@
 import mysql.connector
 import json
 from jose import jwt
-from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, DELETE_LIBRO_QUERY, DELETE_APUNTE_QUERY, DELETE_CALCULADORA_QUERY
 from utils_Usuarios import Rol_Usuario
+from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, FINALIZAR_PRESTAMO_QUERY
+from utils_Prestamo import Estado_Prestamo
+from datetime import datetime
 
 def lambda_handler(event, context):
   try:
@@ -11,7 +13,7 @@ def lambda_handler(event, context):
     if token:
       decoded_token = jwt.get_unverified_claims(token)
       
-      if 'cognito:groups' in decoded_token and Rol_Usuario.Gestores.value in decoded_token['cognito:groups']:
+      if 'cognito:groups' in decoded_token and (Rol_Usuario.Gestores.value in decoded_token['cognito:groups']):
         try:
           connection = mysql.connector.connect(
             host=RDS_HOST,
@@ -22,49 +24,25 @@ def lambda_handler(event, context):
           
           if connection.is_connected():
             if 'pathParameters' in event and event['pathParameters'] is not None:
-              query_params = event['pathParameters']
+              path_params = event['pathParameters']
               
-              table = query_params.get('type')
-              material_id = query_params.get('materialID')
-              
-            cursor = connection.cursor(dictionary=True)
+            cursor = connection.cursor()
             
-            if table == 'Libros':
-              params = {
-                'Material_ID': material_id
-              }
-              
-              cursor.execute(DELETE_LIBRO_QUERY, params)
-              
-            elif table == 'Apuntes':
-              params = {
-                'Material_ID': material_id
-              }
-              
-              cursor.execute(DELETE_APUNTE_QUERY, params)
-              
-            elif table == 'Calculadoras':
-              params = {
-                'Material_ID': material_id
-              }
-              
-              cursor.execute(DELETE_CALCULADORA_QUERY, params)
-              
-            else:
-              return {
-                'statusCode': 404,
-                'body': json.dumps({
-                  'message': 'Material not found'
-                })
-              }
-              
+            params = {
+              'Prestamo_ID': path_params['prestamoID'],
+              'Fecha_Expiracion': datetime.now().strftime('%Y-%m-%d'),
+              'Estado': Estado_Prestamo.Devuelto.value
+            }
+            
+            cursor.execute(FINALIZAR_PRESTAMO_QUERY, params)
+            
             connection.commit()
             
             if cursor.rowcount > 0:
               return {
                 'statusCode': 200,
                 'body': json.dumps({
-                  'message': 'Material deleted successfully'
+                  'message': 'Prestamo finalizado correctamente'
                 })
               }
               
@@ -72,15 +50,23 @@ def lambda_handler(event, context):
               return {
                 'statusCode': 404,
                 'body': json.dumps({
-                  'message': 'Material not found'
+                  'message': 'Prestamo no encontrado'
                 })
               }
+            
+          else:
+            return {
+              'statusCode': 500,
+              'body': json.dumps({
+                'message': 'Error connecting to database'
+              })
+            }
           
-        except mysql.connector.Error as err:
+        except Exception as e:
           return {
             'statusCode': 500,
             'body': json.dumps({
-              'message': f"Error connecting to database: {str(err)}"
+              'message': f'Error finalizing prestamo: {e}'
             })
           }
           
@@ -109,6 +95,6 @@ def lambda_handler(event, context):
     return {
       'statusCode': 500,
       'body': json.dumps({
-        'message': str(e)
+        'message': f'Error finalizing prestamo: {e}'
       })
     }

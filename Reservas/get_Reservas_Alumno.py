@@ -1,8 +1,8 @@
 import mysql.connector
 import json
 from jose import jwt
-from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, GET_LIBRO_BY_ID_QUERY, GET_APUNTE_BY_ID_QUERY, GET_CALCULADORA_BY_ID_QUERY
 from utils_Usuarios import Rol_Usuario
+from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, GET_RESERVAS_BY_ALUMNO_QUERY
 
 def lambda_handler(event, context):
   try:
@@ -21,60 +21,49 @@ def lambda_handler(event, context):
           )
           
           if connection.is_connected():
-            if 'pathParameters' in event and event['pathParameters'] is not None:
-              query_params = event['pathParameters']
-              
-              material_id = query_params.get('materialID')
-              table = query_params.get('type')
-              
             cursor = connection.cursor(dictionary=True)
-            
             params = {
-              'Material_ID': material_id
+              'Alumno_ID': decoded_token['sub']
             }
+            cursor.execute(GET_RESERVAS_BY_ALUMNO_QUERY, params)
+            reservas = cursor.fetchall()
             
-            if table == 'Libros':
-              cursor.execute(GET_LIBRO_BY_ID_QUERY, params)
-              
-            elif table == 'Apuntes':
-              cursor.execute(GET_APUNTE_BY_ID_QUERY, params)
-              
-            elif table == 'Calculadoras':
-              cursor.execute(GET_CALCULADORA_BY_ID_QUERY, params)
-              
-            else:
-              return {
-                'statusCode': 404,
-                'body': json.dumps({
-                  'message': 'Invalid material type'
-                })
-              }
-            
-            material = cursor.fetchone()
-            
-            if material:
+            if reservas:
               return {
                 'statusCode': 200,
                 'body': json.dumps({
-                  'Material': material
+                  'reservas': reservas
                 })
               }
             else:
               return {
                 'statusCode': 404,
                 'body': json.dumps({
-                  'message': 'Material not found'
+                  'message': 'The user has no reservations'
                 })
               }
-          
-        except mysql.connector.Error as err:
+              
+          else:
+            return {
+              'statusCode': 500,
+              'body': json.dumps({
+                'message': 'Internal Server Error'
+              })
+            }
+            
+        except mysql.connector.Error as e:
           return {
             'statusCode': 500,
             'body': json.dumps({
-              'message': f"Error connecting to database: {str(err)}"
+              'message': 'Internal Server Error'
             })
           }
           
+        finally:
+          if connection.is_connected():
+            cursor.close()
+            connection.close()
+            
       else:
         return {
           'statusCode': 403,
@@ -95,6 +84,6 @@ def lambda_handler(event, context):
     return {
       'statusCode': 500,
       'body': json.dumps({
-        'message': str(e)
+        'message': 'Internal Server Error'
       })
     }

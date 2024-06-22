@@ -1,34 +1,18 @@
 import json
 import boto3
-import os
 from jose import jwt
+from utils_Usuarios import Rol_Usuario, USER_POOL_ID
 
 def lambda_handler(event, context):
   try:
     token = event['headers']['auth']
     
-    if not token:
-      return {
-        'statusCode': 401,
-        'body': json.dumps('Unauthorized')
-      }
-      
-    else:
+    if token:
       decoded_token = jwt.get_unverified_claims(token)
       
-      if 'cognito:groups' not in decoded_token or 'Administradores' not in decoded_token['cognito:groups']:
-        return {
-          'statusCode': 401,
-          'body': json.dumps({
-            'message': 'Unauthorized'
-          })
-        }
-        
-      else:
-        user_pool_id = os.getenv('USER_POOL_ID')
-        
+      if 'cognito:groups' in decoded_token and Rol_Usuario.Administradores.value in decoded_token['cognito:groups']:
         client = boto3.client('cognito-idp')
-        response = client.list_users(UserPoolId=user_pool_id)
+        response = client.list_users(UserPoolId=USER_POOL_ID)
         
         users = []
         for user in response['Users']:
@@ -41,28 +25,42 @@ def lambda_handler(event, context):
           
           if 'name' in user_info and 'email' in user_info:
             users.append(user_info)
-            
-          print(user)
         
-        if len(users) == 0:
-          return {
-            'statusCode': 404,
-            'body': json.dumps({
-              'message': 'No users found'
-            })
-          }
-        else:
+        if len(users) > 0:
           return {
             'statusCode': 200,
             'body': json.dumps({
               'users': users
             })
           }
+        else:
+          return {
+            'statusCode': 404,
+            'body': json.dumps({
+              'message': 'No users found'
+            })
+          }
           
+      else:
+        return {
+          'statusCode': 403,
+          'body': json.dumps({
+            'message': 'The user is not allowed to perform this action'
+          })
+        }
+        
+    else:
+      return {
+        'statusCode': 401,
+        'body': json.dumps({
+          'message': 'Missing authentication token'
+        })
+      }
+      
   except Exception as e:
     return {
       'statusCode': 500,
       'body': json.dumps({
-        'message': f"Error: {str(e)}"
+        'message': str(e)
       })
     }

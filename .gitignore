@@ -1,3 +1,7 @@
-python/
+python/mysql-layer
+python/python-jose
+python/utils/python/utils_BD.py
+python/utils/python/utils_Usuarios.py
 comando_iniciar_sesion.txt
-Usuarios/auxiliar.txt
+Usuarios/auxiliar.json
+Usuarios/decoded_token.json
