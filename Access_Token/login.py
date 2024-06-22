@@ -29,7 +29,7 @@ def lambda_handler(event, context):
       'headers': {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'OPTIONS,POST',
-        'Access-Control-Allow-Headers': 'Content-Type'
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
       },
       'body': json.dumps({
         'message': 'Login successful',
@@ -42,6 +42,11 @@ def lambda_handler(event, context):
   except ClientError as e:
     return {
       'statusCode': 400,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'OPTIONS,POST',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
         'message': 'Login failed',
         'error': str(e)

@@ -36,7 +36,8 @@ def lambda_handler(event, context):
               'statusCode': 200,
               'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET'
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
               },
               'body': json.dumps({
                 'libros': libros,
@@ -50,7 +51,8 @@ def lambda_handler(event, context):
               'statusCode': 500,
               'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'GET'
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
               },
               'body': json.dumps({
                 'message': 'Error connecting to database'
@@ -62,7 +64,8 @@ def lambda_handler(event, context):
             'statusCode': 500,
             'headers': {
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'GET'
+              'Access-Control-Allow-Methods': 'GET',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
             },
             'body': json.dumps({
               'message': f"Error connecting to database: {str(err)}"
@@ -79,7 +82,8 @@ def lambda_handler(event, context):
           'statusCode': 403,
           'headers': {
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'GET'
+            'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
           },
           'body': json.dumps({
             'message': 'The user is not authorized to perform this operation'
@@ -91,7 +95,8 @@ def lambda_handler(event, context):
         'statusCode': 401,
         'headers': {
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET'
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
         },
         'body': json.dumps({
           'message': 'Missing authentication token'
@@ -103,7 +108,8 @@ def lambda_handler(event, context):
       'statusCode': 500,
       'headers': {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET'
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
       },
       'body': json.dumps({
         'message': str(e)
