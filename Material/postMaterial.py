@@ -11,7 +11,7 @@ def lambda_handler(event, context):
     if token:
       decoded_token = jwt.get_unverified_claims(token)
       
-      if 'cognito:groups' in decoded_token and Rol_Usuario.Gestor.value in decoded_token['cognito:groups']:
+      if 'cognito:groups' in decoded_token and Rol_Usuario.Gestores.value in decoded_token['cognito:groups']:
         try:
           connection = mysql.connector.connect(
             host=RDS_HOST,
@@ -47,6 +47,7 @@ def lambda_handler(event, context):
               params = {
                 'Nombre': body['Nombre'],
                 'Cantidad': body['Cantidad'],
+                'Unidades_Disponibles': body['Cantidad'],
                 'Autor': body['Autor'],
                 'Asignatura': body['Asignatura']
               }
@@ -57,6 +58,7 @@ def lambda_handler(event, context):
               params = {
                 'Nombre': body['Nombre'],
                 'Cantidad': body['Cantidad'],
+                'Unidades_Disponibles': body['Cantidad'],
                 'Modelo': body['Modelo']
               }
               
@@ -65,6 +67,11 @@ def lambda_handler(event, context):
             else:
               return {
                 'statusCode': 404,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'POST',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'Table not found'
                 })
@@ -74,6 +81,11 @@ def lambda_handler(event, context):
             
             return {
               'statusCode': 201,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Material added successfully'
               })
@@ -82,6 +94,11 @@ def lambda_handler(event, context):
           else:
             return {
                 'statusCode': 500,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'POST',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'Error connecting to database'
                 })
@@ -90,6 +107,11 @@ def lambda_handler(event, context):
         except mysql.connector.Error as err:
           return {
               'statusCode': 500,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': str(err)
               })
@@ -103,6 +125,11 @@ def lambda_handler(event, context):
       else:
         return {
             'statusCode': 403,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'POST',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'The user is not authorized to perform this operation'
             })
@@ -111,6 +138,11 @@ def lambda_handler(event, context):
     else:
       return {
           'statusCode': 401,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'message': 'Missing authentication token'
           })
@@ -119,6 +151,11 @@ def lambda_handler(event, context):
   except Exception as e:
     return {
         'statusCode': 500,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
           'message': str(e)
         })

@@ -1,5 +1,5 @@
-import json
 import boto3
+import json
 from jose import jwt
 from utils_Usuarios import Rol_Usuario, USER_POOL_ID
 
@@ -10,42 +10,39 @@ def lambda_handler(event, context):
     if token:
       decoded_token = jwt.get_unverified_claims(token)
       
-      if 'cognito:groups' in decoded_token and Rol_Usuario.Administradores.value in decoded_token['cognito:groups']:
-        if 'pathParameters' in event and event['pathParameters'] is not None:
-          path_parameters = event['pathParameters']
-          
-          username = path_parameters['username']
-          
-        if 'body' in event and event['body'] is not None:
-          body = json.loads(event['body'])
-          
-          old_group = body['old_group']
-          new_group = body['new_group']
-          
+      if 'cognito:groups' in decoded_token and (Rol_Usuario.Administradores.value in decoded_token['cognito:groups'] or Rol_Usuario.Gestores.value in decoded_token['cognito:groups'] or Rol_Usuario.Alumnos.value in decoded_token['cognito:groups']):
         client = boto3.client('cognito-idp')
         
         try:
-          client.admin_remove_user_from_group(
+          print(decoded_token['email'])
+          
+          response = client.admin_get_user(
             UserPoolId=USER_POOL_ID,
-            Username=username,
-            GroupName=old_group
+            Username=decoded_token['email']
           )
           
-          client.admin_add_user_to_group(
-            UserPoolId=USER_POOL_ID,
-            Username=username,
-            GroupName=new_group
-          )
+          print(response)
+          
+          userAtributes = {attr['Name']: attr['Value'] for attr in response['UserAttributes']}
+          
+          print(userAtributes)
+          
+          filtered_attributes = {
+            'name': userAtributes['name'],
+            'rol': decoded_token['cognito:groups'][0]
+          }
+          
+          print(filtered_attributes)
           
           return {
             'statusCode': 200,
             'headers': {
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
+              'Access-Control-Allow-Methods': 'GET',
               'Access-Control-Allow-Headers': 'Content-Type,auth'
             },
             'body': json.dumps({
-              'message': 'User group changed successfully'
+              'user': filtered_attributes
             })
           }
           
@@ -54,22 +51,17 @@ def lambda_handler(event, context):
             'statusCode': 404,
             'headers': {
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
+              'Access-Control-Allow-Methods': 'GET',
               'Access-Control-Allow-Headers': 'Content-Type,auth'
             },
             'body': json.dumps({
-              'message': 'User not found'
+              'message': 'El usuario no existe'
             })
           }
           
         except client.exceptions.ResourceNotFoundException:
           return {
             'statusCode': 404,
-            'headers': {
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
-              'Access-Control-Allow-Headers': 'Content-Type,auth'
-            },
             'body': json.dumps({
               'message': 'Group not found'
             })
@@ -78,11 +70,6 @@ def lambda_handler(event, context):
         except client.exceptions.NotAuthorizedException:
           return {
             'statusCode': 403,
-            'headers': {
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
-              'Access-Control-Allow-Headers': 'Content-Type,auth'
-            },
             'body': json.dumps({
               'message': 'The user is not authorized to perform this action'
             })
@@ -91,11 +78,6 @@ def lambda_handler(event, context):
         except Exception as e:
           return {
             'statusCode': 500,
-            'headers': {
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
-              'Access-Control-Allow-Headers': 'Content-Type,auth'
-            },
             'body': json.dumps({
               'message': str(e)
             })
@@ -106,24 +88,24 @@ def lambda_handler(event, context):
           'statusCode': 403,
           'headers': {
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'PATCH',
+            'Access-Control-Allow-Methods': 'GET',
             'Access-Control-Allow-Headers': 'Content-Type,auth'
           },
           'body': json.dumps({
-            'message': 'The user is not authorized to perform this action'
+            'message': 'El usuario no está autorizado para realizar esta acción'
           })
         }
         
     else:
       return {
-        'statusCode': 401,
+        'statusCode': 403,
         'headers': {
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'PATCH',
+          'Access-Control-Allow-Methods': 'GET',
           'Access-Control-Allow-Headers': 'Content-Type,auth'
         },
         'body': json.dumps({
-          'message': 'Missing authentication token'
+          'message': 'Falta el token de autenticación'
         })
       }
       
@@ -132,7 +114,7 @@ def lambda_handler(event, context):
       'statusCode': 500,
       'headers': {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'PATCH',
+        'Access-Control-Allow-Methods': 'GET',
         'Access-Control-Allow-Headers': 'Content-Type,auth'
       },
       'body': json.dumps({

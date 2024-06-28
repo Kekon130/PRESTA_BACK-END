@@ -53,6 +53,11 @@ def lambda_handler(event, context):
             else:
               return {
                 'statusCode': 404,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'DELETE',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'Material not found'
                 })
@@ -63,6 +68,11 @@ def lambda_handler(event, context):
             if cursor.rowcount > 0:
               return {
                 'statusCode': 200,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'DELETE',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'Material deleted successfully'
                 })
@@ -71,6 +81,11 @@ def lambda_handler(event, context):
             else:
               return {
                 'statusCode': 404,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'DELETE',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'Material not found'
                 })
@@ -79,6 +94,11 @@ def lambda_handler(event, context):
         except mysql.connector.Error as err:
           return {
             'statusCode': 500,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'DELETE',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': f"Error connecting to database: {str(err)}"
             })
@@ -92,6 +112,11 @@ def lambda_handler(event, context):
       else:
         return {
           'statusCode': 403,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'DELETE',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'message': 'The user is not authorized to perform this operation'
           })
@@ -100,6 +125,11 @@ def lambda_handler(event, context):
     else:
       return {
         'statusCode': 401,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'DELETE',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
           'message': 'Missing authentication token'
         })
@@ -108,6 +138,11 @@ def lambda_handler(event, context):
   except Exception as e:
     return {
       'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'DELETE',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
         'message': str(e)
       })

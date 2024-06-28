@@ -10,42 +10,31 @@ def lambda_handler(event, context):
     if token:
       decoded_token = jwt.get_unverified_claims(token)
       
-      if 'cognito:groups' in decoded_token and Rol_Usuario.Administradores.value in decoded_token['cognito:groups']:
-        if 'pathParameters' in event and event['pathParameters'] is not None:
-          path_parameters = event['pathParameters']
-          
-          username = path_parameters['username']
-          
+      if 'cognito:groups' in decoded_token and (Rol_Usuario.Alumnos.value in decoded_token['cognito:groups'] or Rol_Usuario.Gestores.value in decoded_token['cognito:groups']):
         if 'body' in event and event['body'] is not None:
           body = json.loads(event['body'])
           
-          old_group = body['old_group']
-          new_group = body['new_group']
-          
+          new_password = body['new_password']
+        
         client = boto3.client('cognito-idp')
         
         try:
-          client.admin_remove_user_from_group(
+          response = client.admin_set_user_password(
             UserPoolId=USER_POOL_ID,
-            Username=username,
-            GroupName=old_group
-          )
-          
-          client.admin_add_user_to_group(
-            UserPoolId=USER_POOL_ID,
-            Username=username,
-            GroupName=new_group
+            Username=decoded_token['sub'],
+            Password=new_password,
+            Permanent=True
           )
           
           return {
             'statusCode': 200,
             'headers': {
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
+              'Access-Control-Allow-Methods': 'POST',
               'Access-Control-Allow-Headers': 'Content-Type,auth'
             },
             'body': json.dumps({
-              'message': 'User group changed successfully'
+              'message': 'Password changed successfully'
             })
           }
           
@@ -54,7 +43,7 @@ def lambda_handler(event, context):
             'statusCode': 404,
             'headers': {
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
+              'Access-Control-Allow-Methods': 'POST',
               'Access-Control-Allow-Headers': 'Content-Type,auth'
             },
             'body': json.dumps({
@@ -62,25 +51,25 @@ def lambda_handler(event, context):
             })
           }
           
-        except client.exceptions.ResourceNotFoundException:
+        except client.exceptions.InvalidParameterException as e:
           return {
-            'statusCode': 404,
+            'statusCode': 400,
             'headers': {
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
+              'Access-Control-Allow-Methods': 'POST',
               'Access-Control-Allow-Headers': 'Content-Type,auth'
             },
             'body': json.dumps({
-              'message': 'Group not found'
+              'message': 'Invalid parameters'
             })
           }
           
-        except client.exceptions.NotAuthorizedException:
+        except client.exceptions.NotAuthorizedException as e:
           return {
             'statusCode': 403,
             'headers': {
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
+              'Access-Control-Allow-Methods': 'POST',
               'Access-Control-Allow-Headers': 'Content-Type,auth'
             },
             'body': json.dumps({
@@ -93,11 +82,11 @@ def lambda_handler(event, context):
             'statusCode': 500,
             'headers': {
               'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'PATCH',
+              'Access-Control-Allow-Methods': 'POST',
               'Access-Control-Allow-Headers': 'Content-Type,auth'
             },
             'body': json.dumps({
-              'message': str(e)
+              'message': 'An error occurred'
             })
           }
           
@@ -106,7 +95,7 @@ def lambda_handler(event, context):
           'statusCode': 403,
           'headers': {
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'PATCH',
+            'Access-Control-Allow-Methods': 'POST',
             'Access-Control-Allow-Headers': 'Content-Type,auth'
           },
           'body': json.dumps({
@@ -119,11 +108,11 @@ def lambda_handler(event, context):
         'statusCode': 401,
         'headers': {
           'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'PATCH',
+          'Access-Control-Allow-Methods': 'POST',
           'Access-Control-Allow-Headers': 'Content-Type,auth'
         },
         'body': json.dumps({
-          'message': 'Missing authentication token'
+          'message': 'Missing authorization token'
         })
       }
       
@@ -132,10 +121,10 @@ def lambda_handler(event, context):
       'statusCode': 500,
       'headers': {
         'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'PATCH',
+        'Access-Control-Allow-Methods': 'POST',
         'Access-Control-Allow-Headers': 'Content-Type,auth'
       },
       'body': json.dumps({
-        'message': str(e)
+        'message': 'An error occurred'
       })
     }
