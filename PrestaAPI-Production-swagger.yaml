@@ -1,0 +1,2414 @@
+---
+swagger: "2.0"
+info:
+  version: v1
+  title: "PrestaAPI"
+host: "qfqzi5nng6.execute-api.eu-north-1.amazonaws.com"
+basePath: "/Production"
+schemes:
+- "https"
+paths:
+  /access_token:
+    post:
+      description: "Este método permite a los usuarios iniciar sesión en la aplicació\
+        n"
+      operationId: "Login"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: false
+        type: "string"
+      - in: "body"
+        name: "LoginModel"
+        required: true
+        schema:
+          $ref: "#/definitions/LoginModel"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/LoginModelResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "400":
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    options:
+      description: "Enables CORS"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /material:
+    get:
+      description: "Este método devuelve un listado con todos los materiales registrados\
+        \ en la base de datos"
+      operationId: "GetMaterial"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetMaterialsModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "304":
+          description: "304 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /material/{type}:
+    post:
+      description: "Este método sirve para registrar un nuevo material en la base\
+        \ de datos"
+      operationId: "PostMaterial"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "type"
+        in: "path"
+        required: true
+        type: "string"
+        enum:
+          - Libros
+          - Apuntes
+          - Calculadoras
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "MaterialModelRequest"
+        required: true
+        schema:
+          $ref: "#/definitions/MaterialModelRequest"
+      responses:
+        "201":
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "type"
+        in: "path"
+        required: true
+        type: "string"
+        enum:
+          - Libros
+          - Apuntes
+          - Calculadoras
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /material/{type}/{materialID}:
+    get:
+      description: "Este método devuelve todos los datos respecto de un material que\
+        \ existen en la base de datos"
+      operationId: "GetMaterialById"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "type"
+        in: "path"
+        required: true
+        type: "string"
+        enum:
+          - Libros
+          - Apuntes
+          - Calculadoras
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "materialID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/MaterialModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "304":
+          description: "304 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    delete:
+      description: "Este método permite eliminar los datos de un material de la base\
+        \ de datos"
+      operationId: "DeleteMaterial"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "type"
+        in: "path"
+        required: true
+        type: "string"
+        enum:
+          - Libros
+          - Apuntes
+          - Calculadoras
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "materialID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "204":
+          description: "204 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "type"
+        in: "path"
+        required: true
+        type: "string"
+        enum:
+          - Libros
+          - Apuntes
+          - Calculadoras
+      - name: "materialID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    patch:
+      description: "Este método permite modificar la información almacenada en base\
+        \ de datos de un material"
+      operationId: "ModifyMaterial"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "type"
+        in: "path"
+        required: true
+        type: "string"
+        enum:
+          - Libros
+          - Apuntes
+          - Calculadoras
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "materialID"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "MaterialModelRequest"
+        required: true
+        schema:
+          $ref: "#/definitions/MaterialModelRequest"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+  /prestamos:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /prestamos/alumnos:
+    get:
+      description: "Este método devuelve un listado de todos los préstamos que está\
+        n registrados y que pertenecen a un mismo alumno"
+      operationId: "GetPrestamosAlumnos"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetPrestamosModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+        "304":
+          description: "304 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /prestamos/gestores:
+    get:
+      description: "Este método devuelve un listado con todos los materiales registrados\
+        \ en el sistema"
+      operationId: "GetPrestamos"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: false
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetPrestamosGestorModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "304":
+          description: "304 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    post:
+      description: "Este método permite registrar un nuevo préstamo en la aplicació\
+        n"
+      operationId: "FormalizarPrestamo"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "FormalizarPrestamoModel"
+        required: true
+        schema:
+          $ref: "#/definitions/FormalizarPrestamoModel"
+      responses:
+        "201":
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /prestamos/gestores/{prestamoID}:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "prestamoID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    patch:
+      description: "Esté metodo actualiza el estado del préstamo a devuelto"
+      operationId: "FinalizarPrestamo"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "prestamoID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+  /registro:
+    post:
+      description: "Este método permite a un nuevo usuario crear una cuenta en la\
+        \ aplicación"
+      operationId: "SignUp"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "400":
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /registro/{userEmail}:
+    post:
+      description: "Este método sirve para confirmar la creación de la cuenta de un\
+        \ usuario"
+      operationId: "ConfirmSignUp"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "userEmail"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "400":
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "userEmail"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /reservas:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /reservas/alumnos:
+    get:
+      description: "Método que devuelve el nombre del material, la fecha de inicio,\
+        \ la fecha de expiración y el estado de las reservas realizadas por un alumno"
+      operationId: "GetReservasAlumnos"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: false
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetReservasResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "304":
+          description: "304 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    post:
+      description: "Este método permite a los alumnos registrar una nueva reserva\
+        \ en la aplicación"
+      operationId: "PostReserva"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "PostReservaModel"
+        required: true
+        schema:
+          $ref: "#/definitions/PostReservaModel"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "201":
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /reservas/alumnos/{reservaID}:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "reservaID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    patch:
+      operationId: "CancelarReserva"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: false
+        type: "string"
+      - name: "reservaID"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+  /reservas/gestores:
+    get:
+      description: "Este método devuelve un listado con todos los préstamos registrados\
+        \ en la aplicación"
+      operationId: "GetReservas"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: false
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetReservasGestoresResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "304":
+          description: "304 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /reservas/gestores/{reservaID}:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "reservaID"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    patch:
+      description: "Método que permite a los gestores formalizar una reserva"
+      operationId: "FormalizarReserva"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "reservaID"
+        in: "path"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "201":
+          description: "201 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "400":
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+  /users:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /users/administradores:
+    get:
+      description: "Este método devuelve una lista con todos los usuarios registrados\
+        \ en la User Pool de Cognito"
+      operationId: "GetUsers"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/GetUsersModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "304":
+          description: "304 response"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            ETag:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+  /users/administradores/{username}:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    patch:
+      description: "Este método permite al administrador de la aplicación cambiar\
+        \ el rol de los usuarios"
+      operationId: "ChangeUsersGroup"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "ChangeUsersGroupModel"
+        required: true
+        schema:
+          $ref: "#/definitions/ChangeUsersGroupModel"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+  /users/alumnos:
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+    patch:
+      description: "Este método permite a los alumnos modificar los datos de su perfil"
+      operationId: "EditUser"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "Content-Type"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "EditUserModel"
+        required: true
+        schema:
+          $ref: "#/definitions/EditUserModel"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/UpdateUserModelResponse"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "400":
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+  /users/alumnos/{username}:
+    delete:
+      description: "Este método permite a los alumnos borrar su cuenta"
+      operationId: "DeleteUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "auth"
+        in: "header"
+        required: true
+        type: "string"
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "400":
+          description: "400 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "500":
+          description: "500 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "401":
+          description: "401 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "204":
+          description: "204 response"
+          schema:
+            $ref: "#/definitions/SuccessResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "403":
+          description: "403 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+        "404":
+          description: "404 response"
+          schema:
+            $ref: "#/definitions/ErrorResponseModel"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+      security:
+      - Presta_Authorizer: []
+    options:
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+          headers:
+            Access-Control-Allow-Origin:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Headers:
+              type: "string"
+securityDefinitions:
+  Presta_Authorizer:
+    type: "apiKey"
+    name: "auth"
+    in: "header"
+    x-amazon-apigateway-authtype: "cognito_user_pools"
+definitions:
+  LoginModelResponse:
+    type: "object"
+    required:
+    - "access_token"
+    - "id_token"
+    - "message"
+    - "refresh_token"
+    properties:
+      message:
+        type: "string"
+      id_token:
+        type: "string"
+      access_token:
+        type: "string"
+      refresh_token:
+        type: "string"
+  MaterialModelRequest:
+    type: "object"
+    required:
+    - "Cantidad"
+    - "Nombre"
+    properties:
+      Nombre:
+        type: "string"
+      Cantidad:
+        type: "string"
+      ISBN:
+        type: "string"
+      Año_de_Publicacion:
+        type: "string"
+      Asignatura:
+        type: "string"
+      Autor:
+        type: "string"
+      Modelo:
+        type: "string"
+  GetMaterialsModel:
+    type: "object"
+    properties:
+      libros:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            Nombre:
+              type: "string"
+            Unidades_Disponibles:
+              type: "integer"
+            ISBN:
+              type: "integer"
+            Asignatura:
+              type: "string"
+          required:
+          - "Asignatura"
+          - "ISBN"
+          - "Nombre"
+          - "Unidades_Disponibles"
+      apuntes:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            Nombre:
+              type: "string"
+            Unidades_Disponibles:
+              type: "integer"
+            Autor:
+              type: "string"
+            Asignatura:
+              type: "string"
+          required:
+          - "Asignatura"
+          - "Autor"
+          - "Nombre"
+          - "Unidades_Disponibles"
+      calculadoras:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            Nombre:
+              type: "string"
+            Unidades_Disponibles:
+              type: "integer"
+            Modelo:
+              type: "string"
+          required:
+          - "Modelo"
+          - "Nombre"
+          - "Unidades_Disponibles"
+  MaterialModel:
+    type: "object"
+    required:
+    - "Cantidad"
+    - "Nombre"
+    properties:
+      Nombre:
+        type: "string"
+      Cantidad:
+        type: "string"
+      ISBN:
+        type: "string"
+      Año_de_Publicacion:
+        type: "string"
+      Autor:
+        type: "string"
+      Asignatura:
+        type: "string"
+      Modelo:
+        type: "string"
+  ErrorResponseModel:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+  SuccessResponseModel:
+    type: "object"
+    required:
+    - "message"
+    properties:
+      message:
+        type: "string"
+  PostReservaModel:
+    type: "object"
+    required:
+    - "Material_Nombre"
+    - "Material_Type"
+    properties:
+      Material_Nombre:
+        type: "string"
+      Material_Type:
+        type: "string"
+  FormalizarPrestamoModel:
+    type: "object"
+    required:
+    - "Alumno_Email"
+    - "Material_Nombre"
+    - "Material_Type"
+    properties:
+      Alumno_Email:
+        type: "string"
+      Material_Nombre:
+        type: "string"
+      Material_Type:
+        type: "string"
+  LoginModel:
+    type: "object"
+    required:
+    - "email"
+    - "password"
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+  GetReservasGestoresResponseModel:
+    type: "object"
+    properties:
+      reservas:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            ID:
+              type: "string"
+            Alumno_Email:
+              type: "string"
+            Material_Nombre:
+              type: "string"
+            Fecha_Inicio:
+              type: "string"
+            Fecha_Expiracion:
+              type: "string"
+            Estado:
+              type: "string"
+          required:
+          - "Alumno_Email"
+          - "Estado"
+          - "Fecha_Expiracion"
+          - "Fecha_Inicio"
+          - "ID"
+          - "Material_Nombre"
+  GetReservasResponseModel:
+    type: "object"
+    properties:
+      reservas:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            ID:
+              type: "string"
+            Material_Nombre:
+              type: "string"
+            Fecha_Inicio:
+              type: "string"
+            Fecha_Expiracion:
+              type: "integer"
+            Estado:
+              type: "string"
+          required:
+          - "Estado"
+          - "Fecha_Expiracion"
+          - "Fecha_Inicio"
+          - "ID"
+          - "Material_Nombre"
+  UpdateUserModelResponse:
+    type: "object"
+    properties:
+      responses:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            name:
+              type: "string"
+            password:
+              type: "string"
+          required:
+          - "name"
+          - "password"
+  EditUserModel:
+    type: "object"
+    properties:
+      new_name:
+        type: "string"
+      new_password:
+        type: "string"
+  GetPrestamosGestorModel:
+    type: "object"
+    properties:
+      prestamos:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            ID:
+              type: "string"
+            Alumno_Email:
+              type: "string"
+            Gestor_Email:
+              type: "string"
+            Material_Nombre:
+              type: "string"
+            Fecha_Inicio:
+              type: "string"
+              description: "Formato YYYY-MM-DD"
+              pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+            Fecha_Expiracion:
+              type: "string"
+              description: "Formato YYYY-MM-DD"
+              pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+            Estado:
+              type: "string"
+          required:
+          - "Alumno_Email"
+          - "Estado"
+          - "Fecha_Expiracion"
+          - "Fecha_Inicio"
+          - "Gestor_Email"
+          - "ID"
+          - "Material_Nombre"
+    title: "PrestamoCollection"
+  GetPrestamosModel:
+    type: "object"
+    properties:
+      prestamos:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            ID:
+              type: "string"
+            Gestor_Email:
+              type: "string"
+            Material_Nombre:
+              type: "string"
+            Fecha_Inicio:
+              type: "string"
+              description: "Formato YYYY-MM-DD"
+              pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+            Fecha_Expiracion:
+              type: "string"
+              description: "Formato YYYY-MM-DD"
+              pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+            Estado:
+              type: "string"
+          required:
+          - "Estado"
+          - "Fecha_Expiracion"
+          - "Fecha_Inicio"
+          - "Gestor_Email"
+          - "ID"
+          - "Material_Nombre"
+    title: "PrestamoCollection"
+  GetUsersModel:
+    type: "object"
+    properties:
+      usuarios:
+        type: "array"
+        items:
+          type: "object"
+          properties:
+            username:
+              type: "string"
+            email:
+              type: "string"
+            nombre:
+              type: "integer"
+            rol:
+              type: "string"
+          required:
+          - "email"
+          - "rol"
+          - "username"
+  ChangeUsersGroupModel:
+    type: "object"
+    required:
+    - "new_group"
+    - "old_group"
+    properties:
+      old_group:
+        type: "string"
+      new_group:
+        type: "string"
+  Empty:
+    type: "object"
+    title: "Empty Schema"
