@@ -65,6 +65,11 @@ def lambda_handler(event, context):
 
                 return {
                   'statusCode': 201,
+                  'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST',
+                    'Access-Control-Allow-Headers': 'Content-Type,auth'
+                  },
                   'body': json.dumps({
                     'message': 'Prestamo formalizado correctamente'
                   })
@@ -73,6 +78,11 @@ def lambda_handler(event, context):
               else:
                 return {
                   'statusCode': 400,
+                  'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST',
+                    'Access-Control-Allow-Headers': 'Content-Type,auth'
+                  },
                   'body': json.dumps({
                     'message': 'La reserva no se puede formalizar'
                   })
@@ -81,6 +91,11 @@ def lambda_handler(event, context):
             else:
               return {
                 'statusCode': 404,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'POST',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'Reserva not found'
                 })
@@ -89,6 +104,11 @@ def lambda_handler(event, context):
           else:
             return {
               'statusCode': 500,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Internal Server Error'
               })
@@ -97,6 +117,11 @@ def lambda_handler(event, context):
         except mysql.connector.Error as e:
           return {
             'statusCode': 500,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'POST',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': f'Internal Server Error: {e}'
             })
@@ -110,6 +135,11 @@ def lambda_handler(event, context):
       else:
         return {
           'statusCode': 403,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'message': 'The user is not authorized to perform this operation'
           })
@@ -118,6 +148,11 @@ def lambda_handler(event, context):
     else:
       return {
         'statusCode': 401,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
           'message': 'Missing authentication token'
         })
@@ -126,6 +161,11 @@ def lambda_handler(event, context):
   except Exception as e:
     return {
       'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
         'message': f"Internal Server Error: {e}"
       })

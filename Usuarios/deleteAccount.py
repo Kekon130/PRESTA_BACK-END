@@ -21,6 +21,11 @@ def lambda_handler(event, context):
           
           return {
             'statusCode': 200,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'DELETE',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'Account deleted successfully'
             })
@@ -29,6 +34,11 @@ def lambda_handler(event, context):
         except client.exceptions.UserNotFoundException:
           return {
             'statusCode': 404,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'DELETE',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'User not found'
             })
@@ -37,6 +47,11 @@ def lambda_handler(event, context):
         except client.exceptions.InvalidParameterException as e:
           return {
             'statusCode': 400,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'DELETE',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'Invalid parameters'
             })
@@ -45,6 +60,11 @@ def lambda_handler(event, context):
         except client.exceptions.NotAuthorizedException as e:
           return {
             'statusCode': 403,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'DELETE',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'The user is not authorized to perform this action'
             })
@@ -53,6 +73,11 @@ def lambda_handler(event, context):
         except Exception as e:
           return {
             'statusCode': 500,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'DELETE',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'An error occurred'
             })
@@ -61,6 +86,11 @@ def lambda_handler(event, context):
       else:
         return {
           'statusCode': 403,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'DELETE',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'message': 'The user is not authorized to perform this action'
           })
@@ -69,6 +99,11 @@ def lambda_handler(event, context):
     else:
       return {
         'statusCode': 401,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'DELETE',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
           'message': 'Missing authorization token'
         })
@@ -77,6 +112,11 @@ def lambda_handler(event, context):
   except Exception as e:
     return {
       'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'DELETE',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
         'message': 'An error occurred'
       })

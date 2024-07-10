@@ -36,6 +36,11 @@ def lambda_handler(event, context):
           except client.exceptions.UserNotFoundException as e:
             return {
               'statusCode': 404,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'PATCH',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'User not found'
               })
@@ -44,6 +49,11 @@ def lambda_handler(event, context):
           except client.exceptions.InvalidParameterException as e:
             return {
               'statusCode': 400,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'PATCH',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Invalid parameters'
               })
@@ -69,6 +79,11 @@ def lambda_handler(event, context):
           except client.exceptions.UserNotFoundException as e:
             return {
               'statusCode': 404,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'PATCH',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'User not found'
               })
@@ -77,6 +92,11 @@ def lambda_handler(event, context):
           except client.exceptions.InvalidPasswordException as e:
             return {
               'statusCode': 400,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'PATCH',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Invalid password'
               })
@@ -85,6 +105,11 @@ def lambda_handler(event, context):
           except client.exceptions.InvalidParameterException as e:
             return {
               'statusCode': 400,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'PATCH',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Invalid parameters'
               })
@@ -93,6 +118,11 @@ def lambda_handler(event, context):
           except client.exceptions.NotAuthorizedException as e:
             return {
               'statusCode': 403,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'PATCH',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'The user is not authorized to change the password'
               })
@@ -101,12 +131,22 @@ def lambda_handler(event, context):
           except Exception as e:
             return {
               'statusCode': 500,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'PATCH',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Password update failed'
               })
             }
         return {
           'statusCode': 200,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'PATCH',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'responses': responses
           })
@@ -115,6 +155,11 @@ def lambda_handler(event, context):
       else:
         return {
           'statusCode': 403,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'PATCH',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'message': 'The user is not allowed to perform this action'
           })
@@ -123,6 +168,11 @@ def lambda_handler(event, context):
     else:
       return {
         'statusCode': 401,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'PATCH',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
           'message': 'Missing authentication token'
         })
@@ -131,6 +181,11 @@ def lambda_handler(event, context):
   except Exception as e:
     return {
       'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'PATCH',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
         'message': str(e)
       })

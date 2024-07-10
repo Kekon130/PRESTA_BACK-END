@@ -39,7 +39,7 @@ def lambda_handler(event, context):
                   'Gestor_Email': decoded_token['email'],
                   'Material_ID': material_ID,
                   'Material_Nombre': body['Material_Nombre'],
-                  'Fecha_Prestamo': datetime.now().strftime('%Y-%m-%d'),
+                  'Fecha_Inicio': datetime.now().strftime('%Y-%m-%d'),
                   'Estado': Estado_Prestamo.En_Prestamo.value
                 }
                 
@@ -49,6 +49,11 @@ def lambda_handler(event, context):
                 
                 return {
                   'statusCode': 201,
+                  'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST',
+                    'Access-Control-Allow-Headers': 'Content-Type,auth'
+                  },
                   'body': json.dumps({
                     'message': 'Prestamo formalizado'
                   })
@@ -57,6 +62,11 @@ def lambda_handler(event, context):
               else:
                 return {
                   'statusCode': 404,
+                  'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'POST',
+                    'Access-Control-Allow-Headers': 'Content-Type,auth'
+                  },
                   'body': json.dumps({
                     'message': 'Material not found'
                   })
@@ -65,6 +75,11 @@ def lambda_handler(event, context):
             else:
               return {
                 'statusCode': 404,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'POST',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'User not found'
                 })
@@ -73,6 +88,11 @@ def lambda_handler(event, context):
           else:
             return {
               'statusCode': 500,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'POST',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Error connecting to database'
               })
@@ -81,14 +101,24 @@ def lambda_handler(event, context):
         except mysql.connector.Error as e:
           return {
             'statusCode': 500,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'POST',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
-              'message': 'Internal Server Error'
+              'message': f'Internal Server Error: {e}'
             })
           }
           
       else:
         return {
           'statusCode': 403,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'POST',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'message': 'The user is not authorized to perform this operation'
           })
@@ -97,6 +127,11 @@ def lambda_handler(event, context):
     else:
       return {
         'statusCode': 401,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
           'message': 'Missing authentication token'
         })
@@ -105,6 +140,11 @@ def lambda_handler(event, context):
   except Exception as e:
     return {
       'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
         'message': f"Internal Server Error: {e}"
       })

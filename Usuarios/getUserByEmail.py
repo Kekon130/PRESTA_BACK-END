@@ -1,5 +1,6 @@
 import boto3
 import json
+import hashlib
 from jose import jwt
 from utils_Usuarios import Rol_Usuario, USER_POOL_ID
 
@@ -29,22 +30,37 @@ def lambda_handler(event, context):
           
           filtered_attributes = {
             'name': userAtributes['name'],
+            'email': userAtributes['email'],
             'rol': decoded_token['cognito:groups'][0]
           }
           
           print(filtered_attributes)
           
-          return {
-            'statusCode': 200,
-            'headers': {
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'GET',
-              'Access-Control-Allow-Headers': 'Content-Type,auth'
-            },
-            'body': json.dumps({
-              'user': filtered_attributes
-            })
-          }
+          etag = hashlib.md5(str(filtered_attributes).encode('utf-8')).hexdigest()
+          
+          if 'If-None-Match' in event['headers'] and event['headers']['If-None-Match'] == etag:
+            return {
+              'statusCode': 304,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              }
+            }
+          
+          else: 
+            return {
+              'statusCode': 200,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type,auth',
+                'ETag': etag
+              },
+              'body': json.dumps({
+                'user': filtered_attributes
+              })
+            }
           
         except client.exceptions.UserNotFoundException:
           return {
@@ -62,6 +78,11 @@ def lambda_handler(event, context):
         except client.exceptions.ResourceNotFoundException:
           return {
             'statusCode': 404,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'Group not found'
             })
@@ -70,6 +91,11 @@ def lambda_handler(event, context):
         except client.exceptions.NotAuthorizedException:
           return {
             'statusCode': 403,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'The user is not authorized to perform this action'
             })
@@ -78,6 +104,11 @@ def lambda_handler(event, context):
         except Exception as e:
           return {
             'statusCode': 500,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': str(e)
             })

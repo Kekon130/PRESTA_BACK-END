@@ -3,7 +3,7 @@ import json
 from botocore.exceptions import ClientError
 from utils_Usuarios import CLIENT_ID
 
-def lambda_handler(evetn, context):
+def lambda_handler(event, context):
   if 'body' in event and event['body'] is not None:
     body = json.loads(event['body'])
     
@@ -45,6 +45,19 @@ def lambda_handler(evetn, context):
   except ClientError as e:
     return {
       'statusCode': 400,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      },
+      'body': json.dumps({
+        'message': f'Error al registrar el usuario: {str(e)}'
+      })
+    }
+    
+  except Exception as e:
+    return {
+      'statusCode': 500,
       'headers': {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'POST',

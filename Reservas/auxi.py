@@ -27,18 +27,15 @@ def lambda_handler(event, context):
             if 'body' in event and event['body'] is not None:
               body = json.loads(event['body'])
               
-              materrial_nombre = body['Material_Nombre']
-              material_type = body['Material_Type']
-              
-            if (material_ID := checkIfMaterialExists(materrial_nombre, material_type)):
+            if checkIfMaterialExists(body['Material_Nombre'], body['Material_Type']):
               cursor = connection.cursor(dictionary=True)
 
               fecha_actual = datetime.now().strftime('%Y-%m-%d')
               params = {
                 'Alumno_ID': decoded_token['sub'],
                 'Alumno_Email': decoded_token['email'],
-                'Material_ID': material_ID,
-                'Material_Nombre': materrial_nombre,
+                'Material_ID': body['Material_ID'],
+                'Material_Nombre': body['Material_Nombre'],
                 'Fecha_Inicio': fecha_actual,
                 'Fecha_Expiracion': getFechaExpiracion(fecha_actual),
                 'Estado': Estado_Reserva.Pendiente_Recogida.value
@@ -49,12 +46,7 @@ def lambda_handler(event, context):
               connection.commit()
               
               return {
-                'statusCode': 201,
-                'headers': {
-                  'Access-Control-Allow-Origin': '*',
-                  'Access-Control-Allow-Methods': 'POST',
-                  'Access-Control-Allow-Headers': 'Content-Type,auth'
-                },
+                'statusCode': 200,
                 'body': json.dumps({
                   'message': 'Reserva formalizada correctamente'
                 })
@@ -63,11 +55,6 @@ def lambda_handler(event, context):
             else:
               return {
                 'statusCode': 404,
-                'headers': {
-                  'Access-Control-Allow-Origin': '*',
-                  'Access-Control-Allow-Methods': 'POST',
-                  'Access-Control-Allow-Headers': 'Content-Type,auth'
-                },
                 'body': json.dumps({
                   'message': 'Material not found'
                 })
@@ -76,11 +63,6 @@ def lambda_handler(event, context):
           else:
             return {
                 'statusCode': 500,
-                'headers': {
-                  'Access-Control-Allow-Origin': '*',
-                  'Access-Control-Allow-Methods': 'POST',
-                  'Access-Control-Allow-Headers': 'Content-Type,auth'
-                },
                 'body': json.dumps({
                   'message': 'Error connecting to database'
                 })
@@ -89,11 +71,6 @@ def lambda_handler(event, context):
         except mysql.connector.Error as err:
           return {
               'statusCode': 500,
-              'headers': {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Methods': 'POST',
-                'Access-Control-Allow-Headers': 'Content-Type,auth'
-              },
               'body': json.dumps({
                 'message': str(err)
               })
@@ -101,25 +78,15 @@ def lambda_handler(event, context):
       
       else:
         return {
-            'statusCode': 403,
-            'headers': {
-              'Access-Control-Allow-Origin': '*',
-              'Access-Control-Allow-Methods': 'POST',
-              'Access-Control-Allow-Headers': 'Content-Type,auth'
-            },
+            'statusCode': 401,
             'body': json.dumps({
-              'message': 'The user is not authorized to perform this operation'
+              'message': 'Unauthorized'
             })
         }
         
     else:
       return {
           'statusCode': 401,
-          'headers': {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Methods': 'POST',
-            'Access-Control-Allow-Headers': 'Content-Type,auth'
-          },
           'body': json.dumps({
             'message': 'Missing authentication token'
           })
@@ -128,11 +95,6 @@ def lambda_handler(event, context):
   except Exception as e:
     return {
         'statusCode': 500,
-        'headers': {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST',
-          'Access-Control-Allow-Headers': 'Content-Type,auth'
-        },
         'body': json.dumps({
           'message': str(e)
         })

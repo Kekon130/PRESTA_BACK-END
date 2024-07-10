@@ -36,16 +36,40 @@ def lambda_handler(event, context):
             
             connection.commit()
             
-            return {
-              'statusCode': 200,
-              'body': json.dumps({
-                'message': 'Reserva cancelada correctamente'
-              })
-            }
+            if cursor.rowcount > 0:
+              return {
+                'statusCode': 200,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'DELETE',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
+                'body': json.dumps({
+                  'message': 'Reserva cancelada'
+                })
+              }
+              
+            else:
+              return {
+                'statusCode': 404,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'DELETE',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
+                'body': json.dumps({
+                  'message': 'Reserva no encontrada'
+                })
+              }
             
           else:
             return {
               'statusCode': 500,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'DELETE',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Internal Server Error'
               })
@@ -54,6 +78,11 @@ def lambda_handler(event, context):
         except mysql.connector.Error as e:
           return {
             'statusCode': 500,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'DELETE',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'Internal Server Error'
             })
@@ -67,22 +96,37 @@ def lambda_handler(event, context):
       else:
         return {
           'statusCode': 403,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'DELETE',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
-            'message': 'Forbidden'
+            'message': 'El usuario no tiene permisos para cancelar reservas'
           })
         }
         
     else:
       return {
-        'statusCode': 403,
+        'statusCode': 401,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'DELETE',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
-          'message': 'Forbidden'
+          'message': 'Missing authentication token'
         })
       }
       
   except Exception as e:
     return {
       'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'DELETE',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
         'message': 'Internal Server Error'
       })

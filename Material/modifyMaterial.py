@@ -3,6 +3,7 @@ import json
 from jose import jwt
 from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, UPDATE_LIBRO_QUERY, UPDATE_APUNTE_QUERY, UPDATE_CALCULADORA_QUERY
 from utils_Usuarios import Rol_Usuario
+from utils_Material import Tipo_Material
 
 def lambda_handler(event, context):
   try:
@@ -32,7 +33,7 @@ def lambda_handler(event, context):
               
             cursor = connection.cursor(dictionary=True)
             
-            if table == 'Libros':
+            if table == Tipo_Material.Libros.value:
               params = {
                 'Nombre': body['Nombre'],
                 'Cantidad': body['Cantidad'],
@@ -44,7 +45,7 @@ def lambda_handler(event, context):
               
               cursor.execute(UPDATE_LIBRO_QUERY, params)
               
-            elif table == 'Apuntes':
+            elif table == Tipo_Material.Apuntes.value:
               params = {
                 'Nombre': body['Nombre'],
                 'Cantidad': body['Cantidad'],
@@ -55,7 +56,7 @@ def lambda_handler(event, context):
               
               cursor.execute(UPDATE_APUNTE_QUERY, params)
               
-            elif table == 'Calculadoras':
+            elif table == Tipo_Material.Calculadoras.value:
               params = {
                 'Nombre': body['Nombre'],
                 'Cantidad': body['Cantidad'],

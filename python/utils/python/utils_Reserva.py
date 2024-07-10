@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from enum import Enum
-from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, GET_RESERVA_QUERY
+from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, GET_RESERVAS_QUERY
 
 class Estado_Reserva(Enum):
   Pendiente_Recogida = 'Pendiente de recoger'
@@ -29,7 +29,7 @@ def checkIfReservaCancelable(Reserva_ID):
     if connection.is_connected():
       cursor = connection.cursor(dictionary=True)
       
-      cursor.execute(GET_RESERVA_QUERY, {'Reserva_ID': Reserva_ID})
+      cursor.execute(GET_RESERVAS_QUERY, {'Reserva_ID': Reserva_ID})
       
       result = cursor.fetchone()
       

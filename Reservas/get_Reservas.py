@@ -1,5 +1,6 @@
 import mysql.connector
 import json
+import hashlib
 from jose import jwt
 from utils_Usuarios import Rol_Usuario
 from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, GET_RESERVAS_QUERY
@@ -28,16 +29,54 @@ def lambda_handler(event, context):
             
             reservas = cursor.fetchall()
             
-            return {
-              'statusCode': 200,
-              'body': json.dumps({
-                'Reservas': reservas
-              })
-            }
+            if len(reservas) > 0:
+              etag = hashlib.md5(json.dumps(reservas).encode('utf-8')).hexdigest()
+              
+              if 'headers' in event and 'If-None-Match' in event['headers'] and event['headers']['If-None-Match'] == etag:
+                return {
+                  'statusCode': 304,
+                  'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET',
+                    'Access-Control-Allow-Headers': 'Content-Type,auth,ETag',
+                    'ETag': etag
+                  }
+                }
+              else:
+                return {
+                  'statusCode': 200,
+                  'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET',
+                    'Access-Control-Allow-Headers': 'Content-Type,auth,ETag',
+                    'ETag': etag
+                  },
+                  'body': json.dumps({
+                    'reservas': reservas
+                  })
+                }
+                
+            else:
+              return {
+                'statusCode': 404,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'GET',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
+                'body': json.dumps({
+                  'message': 'El usuario no tiene reservas'
+                })
+              }
             
           else:
             return {
               'statusCode': 500,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Internal Server Error'
               })
@@ -46,6 +85,11 @@ def lambda_handler(event, context):
         except mysql.connector.Error as e:
           return {
             'statusCode': 500,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'GET',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': 'Internal Server Error'
             })
@@ -54,6 +98,11 @@ def lambda_handler(event, context):
       else:
         return {
           'statusCode': 403,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'message': 'The user is not authorized to perform this operation'
           })
@@ -62,15 +111,25 @@ def lambda_handler(event, context):
     else:
       return {
         'statusCode': 401,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
           'message': 'Missing authentication token'
         })
       }
       
-  except KeyError as e:
+  except Exception as e:
     return {
-      'statusCode': 400,
+      'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
-        'message': 'Missing required parameters'
+        'message': 'Error: ${str(e)}'
       })
     }

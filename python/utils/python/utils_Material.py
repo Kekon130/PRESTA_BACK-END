@@ -1,5 +1,11 @@
 import utils_BD
 import mysql.connector
+from enum import Enum
+
+class Tipo_Material(Enum):
+  Libros = 'Libros'
+  Apuntes = 'Apuntes'
+  Calculadoras = 'Calculadoras'
 
 def checkIfMaterialExists(materialName, type):
   try:
@@ -11,13 +17,16 @@ def checkIfMaterialExists(materialName, type):
     )
     
     if connection.is_connected():
+      print('hay conexion')
       cursor = connection.cursor(dictionary=True)
       
       query = f"SELECT * FROM {type} WHERE Nombre = '{materialName}'"
       
       cursor.execute(query)
+      print('ejecutado')
       
       material = cursor.fetchone()
+      print(material)
       
       if material:
         return material['ID']

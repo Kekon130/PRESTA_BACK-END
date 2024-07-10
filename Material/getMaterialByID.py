@@ -1,8 +1,10 @@
 import mysql.connector
 import json
+import hashlib
 from jose import jwt
 from utils_BD import RDS_HOST, RDS_USERNAME, RDS_PASSWORD, RDS_DB_NAME, GET_LIBRO_BY_ID_QUERY, GET_APUNTE_BY_ID_QUERY, GET_CALCULADORA_BY_ID_QUERY
 from utils_Usuarios import Rol_Usuario
+from utils_Material import Tipo_Material
 
 def lambda_handler(event, context):
   try:
@@ -33,13 +35,13 @@ def lambda_handler(event, context):
               'Material_ID': material_id
             }
             
-            if table == 'Libros':
+            if table == Tipo_Material.Libros.value:
               cursor.execute(GET_LIBRO_BY_ID_QUERY, params)
               
-            elif table == 'Apuntes':
+            elif table == Tipo_Material.Apuntes.value:
               cursor.execute(GET_APUNTE_BY_ID_QUERY, params)
               
-            elif table == 'Calculadoras':
+            elif table == Tipo_Material.Calculadoras.value:
               cursor.execute(GET_CALCULADORA_BY_ID_QUERY, params)
               
             else:
@@ -57,18 +59,33 @@ def lambda_handler(event, context):
             
             material = cursor.fetchone()
             
-            if material:
-              return {
-                'statusCode': 200,
-                'headers': {
-                  'Access-Control-Allow-Origin': '*',
-                  'Access-Control-Allow-Methods': 'GET',
-                  'Access-Control-Allow-Headers': 'Content-Type,auth'
-                },
-                'body': json.dumps({
-                  'Material': material
-                })
-              }
+            if len(material) > 0:
+              etag = hashlib.md5(json.dumps(material).encode('utf-8')).hexdigest()
+              
+              if 'headers' in event and 'If-None-Match' in event['headers'] and event['headers']['If-None-Match'] == etag:
+                return {
+                  'statusCode': 304,
+                  'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET',
+                    'Access-Control-Allow-Headers': 'Content-Type,auth,ETag',
+                    'ETag': etag
+                  }
+                }
+                
+              else:
+                return {
+                  'statusCode': 200,
+                  'headers': {
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'GET',
+                    'Access-Control-Allow-Headers': 'Content-Type,auth,ETag',
+                    'ETag': etag
+                  },
+                  'body': json.dumps({
+                    'material': material
+                  })
+                }
             else:
               return {
                 'statusCode': 404,

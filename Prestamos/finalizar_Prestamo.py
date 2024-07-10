@@ -41,6 +41,11 @@ def lambda_handler(event, context):
             if cursor.rowcount > 0:
               return {
                 'statusCode': 200,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'PUT',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'Prestamo finalizado correctamente'
                 })
@@ -49,6 +54,11 @@ def lambda_handler(event, context):
             else:
               return {
                 'statusCode': 404,
+                'headers': {
+                  'Access-Control-Allow-Origin': '*',
+                  'Access-Control-Allow-Methods': 'PUT',
+                  'Access-Control-Allow-Headers': 'Content-Type,auth'
+                },
                 'body': json.dumps({
                   'message': 'Prestamo no encontrado'
                 })
@@ -57,6 +67,11 @@ def lambda_handler(event, context):
           else:
             return {
               'statusCode': 500,
+              'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'PUT',
+                'Access-Control-Allow-Headers': 'Content-Type,auth'
+              },
               'body': json.dumps({
                 'message': 'Error connecting to database'
               })
@@ -65,6 +80,11 @@ def lambda_handler(event, context):
         except Exception as e:
           return {
             'statusCode': 500,
+            'headers': {
+              'Access-Control-Allow-Origin': '*',
+              'Access-Control-Allow-Methods': 'PUT',
+              'Access-Control-Allow-Headers': 'Content-Type,auth'
+            },
             'body': json.dumps({
               'message': f'Error finalizing prestamo: {e}'
             })
@@ -78,6 +98,11 @@ def lambda_handler(event, context):
       else:
         return {
           'statusCode': 403,
+          'headers': {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'PUT',
+            'Access-Control-Allow-Headers': 'Content-Type,auth'
+          },
           'body': json.dumps({
             'message': 'The user is not authorized to perform this operation'
           })
@@ -86,6 +111,11 @@ def lambda_handler(event, context):
     else:
       return {
         'statusCode': 401,
+        'headers': {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'PUT',
+          'Access-Control-Allow-Headers': 'Content-Type,auth'
+        },
         'body': json.dumps({
           'message': 'Missing authentication token'
         })
@@ -94,6 +124,11 @@ def lambda_handler(event, context):
   except Exception as e:
     return {
       'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'PUT',
+        'Access-Control-Allow-Headers': 'Content-Type,auth'
+      },
       'body': json.dumps({
         'message': f'Error finalizing prestamo: {e}'
       })

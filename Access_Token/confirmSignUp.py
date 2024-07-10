@@ -8,7 +8,9 @@ def lambda_handler(event, context):
     body = json.loads(event['body'])
     
     code = body['confirmation_code']
-    email = body['email']
+    
+  if 'pathParameters' in event and event['pathParameters'] is not None:
+    email = event['pathParameters']['userEmail']
     
   client = boto3.client('cognito-idp')
   
@@ -41,5 +43,18 @@ def lambda_handler(event, context):
       },
       'body': json.dumps({
         'message': f'Error al confirmar el usuario: {str(e)}'
+      })
+    }
+    
+  except Exception as e:
+    return {
+      'statusCode': 500,
+      'headers': {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type'
+      },
+      'body': json.dumps({
+        'message': f'Internal Server Error: {str(e)}'
       })
     }
